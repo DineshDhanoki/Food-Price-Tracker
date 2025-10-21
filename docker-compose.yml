@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: food_tracker_db
+    environment:
+      POSTGRES_DB: food_tracker
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - food_tracker_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: food_tracker_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - food_tracker_network
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: food_tracker_backend
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=food_tracker
+      - DB_USER=postgres
+      - DB_PASSWORD=password123
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - food_tracker_network
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: food_tracker_frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - food_tracker_network
+
+volumes:
+  postgres_data:
+
+networks:
+  food_tracker_network:
+    driver: bridge

@@ -1,0 +1,25 @@
+{
+  "name": "food-price-tracker",
+  "version": "1.0.0",
+  "description": "Track food prices across multiple retailers and get price alerts",
+  "main": "backend/server.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm start",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm start",
+    "test": "jest",
+    "lint": "eslint . --ext .js,.jsx",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "keywords": ["food", "prices", "tracking", "scraping", "alerts"],
+  "author": "Dinesh",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "jest": "^29.7.0",
+    "eslint": "^8.55.0"
+  }
+}
